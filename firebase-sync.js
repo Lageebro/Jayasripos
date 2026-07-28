@@ -140,15 +140,16 @@ async function syncProductionToCloud(entry) {
     // Generate unique document ID to prevent mobile entries from overwriting each other
     const docId = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     await firestoreDb.collection("machine_entries").doc(docId).set({
+      cloudId: docId,
       workerId: Number(entry.workerId),
       date: String(entry.date),
       machineId: String(entry.machineId),
       boxCount: Number(entry.boxCount),
       mixerCount: Number(entry.mixerCount),
       wage: Number(entry.wage),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: Date.now()
     }, { merge: true });
-    console.log("Machine entry synced to Firebase Cloud successfully with unique docId:", docId);
+    console.log("Machine entry synced to Firebase Cloud successfully with unique cloudId:", docId);
   } catch (err) {
     console.warn("Failed to sync machine entry to Cloud:", err);
   }
@@ -188,7 +189,9 @@ function listenCloudProductionLogs(onProductionUpdated) {
     return firestoreDb.collection("machine_entries").onSnapshot(snapshot => {
       const logs = [];
       snapshot.forEach(doc => {
-        logs.push(doc.data());
+        const data = doc.data();
+        data.cloudId = doc.id;
+        logs.push(data);
       });
       console.log("Real-time Machine Entries received from Cloud:", logs.length);
       if (typeof onProductionUpdated === "function") {
