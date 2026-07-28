@@ -217,3 +217,29 @@ async function syncSettingsToCloud(key, value) {
     console.warn(`Failed to sync setting '${key}' to Cloud:`, err);
   }
 }
+
+/**
+ * Real-time listener for Settings/Rates from Cloud (used by Mobile Dashboard).
+ */
+function listenCloudSettings(onSettingsUpdated) {
+  if (!isFirebaseConnected()) return null;
+  try {
+    return firestoreDb.collection("settings").onSnapshot(snapshot => {
+      snapshot.forEach(doc => {
+        const key = doc.id;
+        const data = doc.data();
+        if (data && data.value !== undefined) {
+          console.log(`Real-time setting '${key}' received from Cloud.`);
+          if (typeof onSettingsUpdated === "function") {
+            onSettingsUpdated(key, data.value);
+          }
+        }
+      });
+    }, err => {
+      console.warn("Settings Cloud listener error:", err);
+    });
+  } catch (e) {
+    console.warn("Failed to attach Settings Cloud listener:", e);
+    return null;
+  }
+}

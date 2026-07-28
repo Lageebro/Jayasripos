@@ -11,15 +11,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Initialize Firebase Cloud Sync if configured
   if (typeof initFirebaseSync === "function") {
     await initFirebaseSync();
+
+    // Listen to real-time workers from cloud
     if (typeof listenCloudWorkers === "function") {
       listenCloudWorkers(async (cloudWorkers) => {
         if (Array.isArray(cloudWorkers) && cloudWorkers.length > 0) {
           for (let w of cloudWorkers) {
-            if (w && w.id && w.group === "machine_operator") {
+            if (w && w.id) {
               await db.workers.put(w);
             }
           }
           await loadOperators();
+        }
+      });
+    }
+
+    // Listen to real-time machine rates / settings from cloud
+    if (typeof listenCloudSettings === "function") {
+      listenCloudSettings(async (key, value) => {
+        if (key && value) {
+          await setSetting(key, value);
+          if (typeof triggerLiveCalculations === "function") {
+            triggerLiveCalculations();
+          }
         }
       });
     }
@@ -46,7 +60,11 @@ async function loadOperators() {
   const select = document.getElementById("op-worker-id");
   select.innerHTML = '<option value="">Choose your name...</option>';
 
-  const operators = await db.workers.where("group").equals("machine_operator").toArray();
+  let operators = await db.workers.where("group").equals("machine_operator").toArray();
+  if (operators.length === 0) {
+    // Fallback: show all registered workers
+    operators = await db.workers.toArray();
+  }
   
   if (operators.length === 0) {
     select.innerHTML = '<option value="">No Operators Registered (Register on PC POS)</option>';
@@ -56,7 +74,7 @@ async function loadOperators() {
   operators.forEach(op => {
     const opt = document.createElement("option");
     opt.value = op.id;
-    opt.textContent = op.name;
+    opt.textContent = op.name + (op.group === "machine_operator" ? "" : " (" + op.group + ")");
     select.appendChild(opt);
   });
 }
