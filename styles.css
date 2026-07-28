@@ -1,0 +1,267 @@
+/* styles.css - Custom styling and Print media rules for Jaya Sri POS */
+
+/* Custom fonts import - Outfit and Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  --accent-gradient: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.4);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(30, 58, 138, 0.08);
+}
+
+/* Sidebar Hover / Active Animations */
+.sidebar-link {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+.sidebar-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: #3b82f6;
+  transition: width 0.2s ease;
+}
+
+.sidebar-link:hover::after {
+  width: 100%;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* Micro-animations */
+.btn-animate {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-animate:active {
+  transform: scale(0.96);
+}
+
+/* ==========================================
+   PRINT MEDIA CUSTOM OVERRIDES
+   ========================================== */
+@media print {
+  /* Hide non-printable screen elements */
+  .no-print, 
+  nav, 
+  aside, 
+  header,
+  button,
+  .btn,
+  .alert,
+  .tabs-nav,
+  input[type="button"],
+  input[type="submit"] {
+    display: none !important;
+  }
+
+  body {
+    background-color: #fff !important;
+    color: #000 !important;
+    font-size: 12px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Layout 1: Thermal Slip / Receipt Format */
+  .print-receipt-slip {
+    width: 76mm !important;
+    max-width: 76mm !important;
+    margin: 0 auto !important;
+    padding: 2mm !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+  }
+
+  .print-receipt-slip h1,
+  .print-receipt-slip h2,
+  .print-receipt-slip h3 {
+    font-family: 'Courier New', Courier, monospace !important;
+    text-align: center !important;
+    margin: 2px 0 !important;
+  }
+
+  .print-receipt-slip .divider {
+    border-top: 1px dashed #000 !important;
+    margin: 6px 0 !important;
+  }
+
+  .print-receipt-slip table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .print-receipt-slip th,
+  .print-receipt-slip td {
+    padding: 3px 0 !important;
+    text-align: left !important;
+  }
+
+  .print-receipt-slip .text-right {
+    text-align: right !important;
+  }
+
+  /* Layout 2: Wide Paysheet Ledger Format */
+  .print-ledger-sheet {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10mm !important;
+  }
+
+  .print-ledger-sheet table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 15px !important;
+  }
+
+  .print-ledger-sheet th,
+  .print-ledger-sheet td {
+    border: 1px solid #000 !important;
+    padding: 6px 8px !important;
+    text-align: left !important;
+  }
+
+  .print-ledger-sheet th {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-ledger-sheet .signatures {
+    margin-top: 50px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .print-ledger-sheet .signature-line {
+    border-top: 1px solid #000 !important;
+    width: 200px !important;
+    text-align: center !important;
+    padding-top: 5px !important;
+    font-size: 11px !important;
+  }
+
+  /* Invoice Print Layout */
+  .print-invoice {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10mm !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  .print-invoice .header-title {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: #1e3a8a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-invoice table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 20px 0 !important;
+  }
+
+  .print-invoice th,
+  .print-invoice td {
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 10px 12px !important;
+  }
+
+  .print-invoice th {
+    background-color: #eff6ff !important;
+    color: #1e3a8a !important;
+    font-weight: 600 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Page breaks optimization */
+  .page-break {
+    page-break-before: always !important;
+  }
+}
