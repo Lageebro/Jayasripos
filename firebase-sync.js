@@ -14,6 +14,28 @@ const defaultFirebaseConfig = {
 };
 
 /**
+ * Helper to wait until Firebase JS CDN SDK is loaded on window object.
+ */
+function waitForFirebaseSDK(maxWaitMs = 10000) {
+  return new Promise((resolve) => {
+    if (typeof firebase !== "undefined" && firebase.initializeApp) {
+      return resolve(true);
+    }
+
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      if (typeof firebase !== "undefined" && firebase.initializeApp) {
+        clearInterval(interval);
+        resolve(true);
+      } else if (Date.now() - startTime > maxWaitMs) {
+        clearInterval(interval);
+        resolve(false);
+      }
+    }, 200);
+  });
+}
+
+/**
  * Initializes Firebase App and Firestore if configuration exists in db.settings or localStorage.
  */
 async function initFirebaseSync() {
@@ -42,14 +64,16 @@ async function initFirebaseSync() {
       }
     }
 
-    // Initialize Firebase if not already initialized
-    if (typeof firebase === "undefined") {
-      console.warn("Firebase SDK not loaded on window object.");
+    // 2. Wait up to 10 seconds for CDN Firebase SDK scripts to finish loading
+    const sdkLoaded = await waitForFirebaseSDK(10000);
+    if (!sdkLoaded) {
+      console.warn("Firebase SDK CDN loading timed out. Running in Local Offline Mode.");
       isCloudActive = false;
       updateCloudStatusUI(false);
       return false;
     }
 
+    // Initialize Firebase if not already initialized
     if (!firebase.apps.length) {
       firebaseApp = firebase.initializeApp(config);
     } else {
@@ -69,6 +93,14 @@ async function initFirebaseSync() {
     return false;
   }
 }
+
+// Background Auto-Reconnect Poller (Retries every 15s if initially offline or delayed CDN)
+setInterval(async () => {
+  if (!isCloudActive && typeof firebase !== "undefined" && firebase.initializeApp) {
+    console.log("Attempting background Firebase Cloud Sync connection...");
+    await initFirebaseSync();
+  }
+}, 15000);
 
 /**
  * Checks whether Firebase cloud sync is currently connected.
