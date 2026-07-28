@@ -137,17 +137,18 @@ async function syncWorkerToCloud(worker) {
 async function syncProductionToCloud(entry) {
   if (!isFirebaseConnected()) return;
   try {
-    const docId = entry.id ? String(entry.id) : `prod_${Date.now()}`;
+    // Generate unique document ID to prevent mobile entries from overwriting each other
+    const docId = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     await firestoreDb.collection("machine_entries").doc(docId).set({
-      workerId: entry.workerId,
-      date: entry.date,
-      machineId: entry.machineId,
-      boxCount: entry.boxCount,
-      mixerCount: entry.mixerCount,
-      wage: entry.wage,
+      workerId: Number(entry.workerId),
+      date: String(entry.date),
+      machineId: String(entry.machineId),
+      boxCount: Number(entry.boxCount),
+      mixerCount: Number(entry.mixerCount),
+      wage: Number(entry.wage),
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
-    console.log("Machine entry synced to Firebase Cloud for worker ID:", entry.workerId);
+    console.log("Machine entry synced to Firebase Cloud successfully with unique docId:", docId);
   } catch (err) {
     console.warn("Failed to sync machine entry to Cloud:", err);
   }
