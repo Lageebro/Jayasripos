@@ -46,12 +46,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderMixerButtons();
 });
 
-// Helper: Get Today's Date String
+// Helper: Get Today's Date String in exact Sri Lanka Local Time (Asia/Colombo YYYY-MM-DD)
 function getTodayDateString() {
   const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
+  const options = { timeZone: "Asia/Colombo", year: "numeric", month: "2-digit", day: "2-digit" };
+  const parts = new Intl.DateTimeFormat("en-CA", options).formatToParts(d);
+  const year = parts.find(p => p.type === "year").value;
+  const month = parts.find(p => p.type === "month").value;
+  const day = parts.find(p => p.type === "day").value;
   return `${year}-${month}-${day}`;
 }
 
