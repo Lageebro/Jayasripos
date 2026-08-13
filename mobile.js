@@ -62,10 +62,11 @@ async function loadOperators() {
   const select = document.getElementById("op-worker-id");
   select.innerHTML = '<option value="">Choose your name...</option>';
 
-  let operators = await db.workers.where("group").equals("machine_operator").toArray();
+  const allWorkers = await db.workers.toArray();
+  let operators = allWorkers.filter(w => w.group === "machine_operator" || w.group === "both");
   if (operators.length === 0) {
     // Fallback: show all registered workers
-    operators = await db.workers.toArray();
+    operators = allWorkers;
   }
   
   if (operators.length === 0) {
@@ -76,7 +77,9 @@ async function loadOperators() {
   operators.forEach(op => {
     const opt = document.createElement("option");
     opt.value = op.id;
-    opt.textContent = op.name + (op.group === "machine_operator" ? "" : " (" + op.group + ")");
+    const displayId = op.workerCode || op.customId || `#${op.id}`;
+    const displayNic = op.nic ? ` | NIC: ${op.nic}` : '';
+    opt.textContent = `[ID: ${displayId}] ${op.name}${displayNic}`;
     select.appendChild(opt);
   });
 }

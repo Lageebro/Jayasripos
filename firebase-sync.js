@@ -151,6 +151,9 @@ async function syncWorkerToCloud(worker) {
     const docId = worker.id ? String(worker.id) : String(Date.now());
     await firestoreDb.collection("workers").doc(docId).set({
       id: worker.id || Date.now(),
+      workerCode: worker.workerCode || worker.customId || "",
+      customId: worker.customId || worker.workerCode || "",
+      nic: worker.nic || "",
       name: worker.name,
       group: worker.group,
       joinDate: worker.joinDate,

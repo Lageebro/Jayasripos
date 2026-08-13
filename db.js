@@ -5,10 +5,11 @@ const db = new Dexie("JayaSriPOSDatabase");
 
 // Define Schemas
 db.version(1).stores({
-  workers: "++id, name, group, joinDate, pinCode", // group: 'packaging' | 'machine_operator'
+  workers: "++id, workerCode, customId, nic, basicSalary, name, group, joinDate, pinCode", // group: 'packaging' | 'machine_operator'
   attendanceEntries: "++id, workerId, date, clockIn, clockOut, hoursWorked, wage", // Packaging group
   machineEntries: "++id, workerId, date, machineId, boxCount, mixerCount, wage", // Machine operators
   advances: "++id, workerId, date, amount, note",
+  bonuses: "++id, workerId, date, amount, note",
   paysheets: "++id, workerId, periodStart, periodEnd, totalWage, totalAdvances, netPay, generatedDate",
   settings: "key" // key, value
 });
@@ -28,7 +29,7 @@ const defaultMachineRates = {
       32: 500, 33: 550, 34: 600, 35: 650, 36: 700, 37: 750, 38: 800, 39: 850, 40: 900, 41: 950, 42: 1000, 43: 1050, 44: 1100, 45: 1150
     },
     mixer4: {
-      32: 600, 33: 650, 34: 700, 35: 750, 36: 800, 37: 850, 38: 900, 39: 950, 40: 1000, 41: 1050, 42: 1100, 43: 1150, 44: 1200, 45: 1250 // corrected typo in source: 1150 -> 1250, editable in UI
+      32: 2400, 33: 2600, 34: 2800, 35: 3000, 36: 3200, 37: 3400, 38: 3600, 39: 3800, 40: 4000, 41: 4200, 42: 4400, 43: 4600, 44: 4800, 45: 5000 // corrected typo in source: 1150 -> 1250, editable in UI
     }
   },
   machine_02: {
@@ -37,7 +38,7 @@ const defaultMachineRates = {
       32: 500, 33: 550, 34: 600, 35: 650, 36: 700, 37: 750, 38: 800, 39: 850, 40: 900, 41: 950, 42: 1000, 43: 1050, 44: 1100, 45: 1150
     },
     mixer4: {
-      32: 600, 33: 650, 34: 700, 35: 750, 36: 800, 37: 850, 38: 900, 39: 950, 40: 1000, 41: 1050, 42: 1100, 43: 1150, 44: 1200, 45: 1250
+      32: 2400, 33: 2600, 34: 2800, 35: 3000, 36: 3200, 37: 3400, 38: 3600, 39: 3800, 40: 4000, 41: 4200, 42: 4400, 43: 4600, 44: 4800, 45: 5000
     }
   },
   machine_03: {
@@ -46,7 +47,7 @@ const defaultMachineRates = {
       27: 500, 28: 550, 29: 600, 30: 650, 31: 700, 32: 750, 33: 800, 34: 850, 35: 900, 36: 950, 37: 1000
     },
     mixer4: {
-      27: 600, 28: 650, 29: 700, 30: 750, 31: 800, 32: 850, 33: 900, 34: 950, 35: 1000, 36: 1050, 37: 1100
+      27: 2400, 28: 2600, 29: 2800, 30: 3000, 31: 3200, 32: 3400, 33: 3600, 34: 3800, 35: 4000, 36: 4200, 37: 4400
     }
   }
 };
@@ -57,14 +58,16 @@ db.on("populate", async () => {
     { key: "packaging_rates", value: defaultPackagingRates },
     { key: "machine_rates", value: defaultMachineRates },
     { key: "hourly_rounding", value: "interpolate" }, // interpolate | round_down | round_up | nearest
-    { key: "firebase_config", value: {
-      apiKey: "AIzaSyB8n-lOuvEZMcursYcvQMgWxZFAB5eQLLQ",
-      authDomain: "jayasrisystem-6c73c.firebaseapp.com",
-      projectId: "jayasrisystem-6c73c",
-      storageBucket: "jayasrisystem-6c73c.firebasestorage.app",
-      messagingSenderId: "616485465407",
-      appId: "1:616485465407:web:132e8a97be3ed86504b78a"
-    } }
+    {
+      key: "firebase_config", value: {
+        apiKey: "AIzaSyB8n-lOuvEZMcursYcvQMgWxZFAB5eQLLQ",
+        authDomain: "jayasrisystem-6c73c.firebaseapp.com",
+        projectId: "jayasrisystem-6c73c",
+        storageBucket: "jayasrisystem-6c73c.firebasestorage.app",
+        messagingSenderId: "616485465407",
+        appId: "1:616485465407:web:132e8a97be3ed86504b78a"
+      }
+    }
   ]);
 });
 
@@ -74,7 +77,7 @@ async function getSetting(key, defaultValue = null) {
   if (setting && setting.value !== undefined) {
     return setting.value;
   }
-  
+
   // Try localStorage fallback
   try {
     const cached = localStorage.getItem("jayasri_setting_" + key);
@@ -158,7 +161,7 @@ async function calculatePackagingWage(hours) {
     if (lowerHour === upperHour) {
       return rates[lowerHour] || (lowerHour > 24 ? rates[24] : 0);
     }
-    
+
     // Boundary check
     if (lowerHour >= 24) return rates[24];
     if (lowerHour < 1) {
@@ -169,7 +172,7 @@ async function calculatePackagingWage(hours) {
 
     const rateLower = rates[lowerHour] || 0;
     const rateUpper = rates[upperHour] || 0;
-    
+
     const fraction = hours - lowerHour;
     return Math.round(rateLower + (rateUpper - rateLower) * fraction);
   }
@@ -231,6 +234,7 @@ async function exportDatabaseToJSON() {
   const attendance = await db.attendanceEntries.toArray();
   const machineEntries = await db.machineEntries.toArray();
   const advances = await db.advances.toArray();
+  const bonuses = db.bonuses ? await db.bonuses.toArray() : [];
   const paysheets = await db.paysheets.toArray();
   const settings = await db.settings.toArray();
 
@@ -242,6 +246,7 @@ async function exportDatabaseToJSON() {
       attendanceEntries: attendance,
       machineEntries,
       advances,
+      bonuses,
       paysheets,
       settings
     }
@@ -252,13 +257,17 @@ async function importDatabaseFromJSON(jsonString) {
   try {
     const backup = JSON.parse(jsonString);
     if (!backup.data) throw new Error("Invalid backup format: missing 'data' object.");
-    
-    await db.transaction("rw", [db.workers, db.attendanceEntries, db.machineEntries, db.advances, db.paysheets, db.settings], async () => {
+
+    const tables = [db.workers, db.attendanceEntries, db.machineEntries, db.advances, db.paysheets, db.settings];
+    if (db.bonuses) tables.push(db.bonuses);
+
+    await db.transaction("rw", tables, async () => {
       // Clear tables
       await db.workers.clear();
       await db.attendanceEntries.clear();
       await db.machineEntries.clear();
       await db.advances.clear();
+      if (db.bonuses) await db.bonuses.clear();
       await db.paysheets.clear();
       await db.settings.clear();
 
@@ -267,6 +276,7 @@ async function importDatabaseFromJSON(jsonString) {
       if (backup.data.attendanceEntries) await db.attendanceEntries.bulkAdd(backup.data.attendanceEntries);
       if (backup.data.machineEntries) await db.machineEntries.bulkAdd(backup.data.machineEntries);
       if (backup.data.advances) await db.advances.bulkAdd(backup.data.advances);
+      if (backup.data.bonuses && db.bonuses) await db.bonuses.bulkAdd(backup.data.bonuses);
       if (backup.data.paysheets) await db.paysheets.bulkAdd(backup.data.paysheets);
       if (backup.data.settings) await db.settings.bulkAdd(backup.data.settings);
     });

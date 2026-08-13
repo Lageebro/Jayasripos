@@ -1,20 +1,26 @@
-/* styles.css - Custom styling and Print media rules for Jaya Sri POS */
+/* styles.css - Ultra-Premium Design System & Print Rules for Jaya Sri POS */
 
-/* Custom fonts import - Outfit and Inter */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Custom fonts import - Outfit & Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-  --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-  --accent-gradient: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%);
+  --secondary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(226, 232, 240, 0.8);
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f3f4f6;
-  color: #1f2937;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(2, 132, 199, 0.06) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: #0f172a;
   overflow-x: hidden;
 }
 
@@ -22,47 +28,43 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Outfit', sans-serif;
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphism 2.0 Classes */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.04), 0 20px 25px -5px rgba(59, 130, 246, 0.03);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(241, 245, 249, 0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 20px rgba(30, 58, 138, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 30px -10px rgba(30, 58, 138, 0.08), 0 8px 15px -5px rgba(59, 130, 246, 0.05);
+  border-color: rgba(147, 197, 253, 0.6);
 }
 
-/* Sidebar Hover / Active Animations */
+/* Sidebar Link Animations */
 .sidebar-link {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
-.sidebar-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  background: #3b82f6;
-  transition: width 0.2s ease;
+.sidebar-link:hover {
+  transform: translateX(3px);
 }
 
-.sidebar-link:hover::after {
-  width: 100%;
+/* Custom Input Focus Ring */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important;
+  border-color: #0284c7 !important;
 }
 
 /* Custom Scrollbars */
@@ -72,36 +74,50 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #0284c7;
 }
 
-/* Animations */
+/* Glowing Animations */
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.2);
   }
   50% {
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7), 0 0 45px rgba(59, 130, 246, 0.4);
   }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
 .pulse-glow {
-  animation: pulseGlow 2s infinite ease-in-out;
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+.float-animation {
+  animation: floatSlow 4s ease-in-out infinite;
 }
 
 /* Micro-animations */
 .btn-animate {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.btn-animate:hover {
+  transform: translateY(-1px);
+}
+
 .btn-animate:active {
   transform: scale(0.96);
 }
@@ -109,7 +125,39 @@ h1, h2, h3, h4, h5, h6 {
 /* ==========================================
    PRINT MEDIA CUSTOM OVERRIDES
    ========================================== */
+@page {
+  size: A4 portrait;
+  margin: 0 !important;
+}
+
+/* Hide print-area on normal screen display */
+#print-area {
+  display: none;
+}
+
 @media print {
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Ensure ONLY #print-area is printed - hide all other body children */
+  body > *:not(#print-area) {
+    display: none !important;
+  }
+
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background-color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   /* Hide non-printable screen elements */
   .no-print, 
   nav, 
@@ -124,12 +172,21 @@ h1, h2, h3, h4, h5, h6 {
     display: none !important;
   }
 
-  body {
-    background-color: #fff !important;
-    color: #000 !important;
-    font-size: 12px !important;
-    padding: 0 !important;
+  #print-area {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
     margin: 0 !important;
+    padding: 0 !important;
+    background-color: #ffffff !important;
+    z-index: 99999 !important;
+    overflow: hidden !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .print-container {
@@ -145,44 +202,200 @@ h1, h2, h3, h4, h5, h6 {
     background: transparent !important;
   }
 
-  /* Layout 1: Thermal Slip / Receipt Format */
-  .print-receipt-slip {
-    width: 76mm !important;
-    max-width: 76mm !important;
-    margin: 0 auto !important;
-    padding: 2mm !important;
-    font-family: 'Courier New', Courier, monospace !important;
-    font-size: 11px !important;
+  /* Layout 1: Background Template Image Overlay Format (Paysheet01.png) */
+  .print-layout-01-page {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #ffffff !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .paysheet-bg-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: fill !important;
+    z-index: 1 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .paysheet-overlay-layer {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10 !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    color: #000000 !important;
+  }
+
+  /* Header Worker Info Overlay - Left Column (Month 1) */
+  .overlay-col1-info {
+    position: absolute !important;
+    top: 17.5% !important;
+    left: 3.5% !important;
+    width: 44% !important;
+    font-size: 11.5px !important;
     line-height: 1.4 !important;
   }
 
-  .print-receipt-slip h1,
-  .print-receipt-slip h2,
-  .print-receipt-slip h3 {
-    font-family: 'Courier New', Courier, monospace !important;
-    text-align: center !important;
-    margin: 2px 0 !important;
+  /* Header Worker Info Overlay - Right Column (Month 2) */
+  .overlay-col2-info {
+    position: absolute !important;
+    top: 17.5% !important;
+    left: 53.5% !important;
+    width: 44% !important;
+    font-size: 11.5px !important;
+    line-height: 1.4 !important;
   }
 
-  .print-receipt-slip .divider {
-    border-top: 1px dashed #000 !important;
-    margin: 6px 0 !important;
+  .overlay-info-line {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 1.5px 0 !important;
+    border-bottom: 1px dashed rgba(0,0,0,0.2) !important;
   }
 
-  .print-receipt-slip table {
-    width: 100% !important;
-    border-collapse: collapse !important;
+  .overlay-info-label {
+    font-weight: 600 !important;
+    color: #1e293b !important;
   }
 
-  .print-receipt-slip th,
-  .print-receipt-slip td {
-    padding: 3px 0 !important;
-    text-align: left !important;
+  .overlay-info-val {
+    font-weight: 700 !important;
+    color: #0f172a !important;
   }
 
-  .print-receipt-slip .text-right {
+  /* Financial Fields - Common styling */
+  .overlay-val-right {
+    position: absolute !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    color: #000000 !important;
     text-align: right !important;
   }
+
+  /* Financial Amounts - Column 1 (Left - Month 1) */
+  .col1-gross   { top: 34.3% !important; right: 53.5% !important; }
+  .col1-bonus   { top: 38.0% !important; right: 53.5% !important; }
+  .col1-monthly { top: 41.7% !important; right: 53.5% !important; }
+  .col1-advance { top: 45.4% !important; right: 53.5% !important; }
+  .col1-balance { top: 49.1% !important; right: 53.5% !important; }
+  .col1-net     { top: 58.4% !important; right: 53.5% !important; font-size: 15px !important; font-weight: 800 !important; }
+  .col1-date    { top: 91.2% !important; right: 52.5% !important; font-size: 11.5px !important; font-weight: bold !important; }
+
+  /* Financial Amounts - Column 2 (Right - Month 2) */
+  .col2-gross   { top: 34.3% !important; right: 3.5% !important; }
+  .col2-bonus   { top: 38.0% !important; right: 3.5% !important; }
+  .col2-monthly { top: 41.7% !important; right: 3.5% !important; }
+  .col2-advance { top: 45.4% !important; right: 3.5% !important; }
+  .col2-balance { top: 49.1% !important; right: 3.5% !important; }
+  .col2-net     { top: 58.4% !important; right: 3.5% !important; font-size: 15px !important; font-weight: 800 !important; }
+  .col2-date    { top: 91.2% !important; right: 3.5% !important; font-size: 11.5px !important; font-weight: bold !important; }
+
+  /* Layout 02: EPF / ETF Paysheet Template Image Overlay Format (paysheet02.png) */
+  .print-layout-02-page {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #ffffff !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .paysheet2-bg-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: fill !important;
+    z-index: 1 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .paysheet2-overlay-layer {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10 !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    color: #000000 !important;
+  }
+
+  /* Header Worker Info Overlay for Layout 02 */
+  .overlay2-col1-info {
+    position: absolute !important;
+    top: 17.5% !important;
+    left: 3.5% !important;
+    width: 44% !important;
+    font-size: 11.5px !important;
+    line-height: 1.4 !important;
+  }
+
+  .overlay2-col2-info {
+    position: absolute !important;
+    top: 17.5% !important;
+    left: 53.5% !important;
+    width: 44% !important;
+    font-size: 11.5px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Financial Amounts - Column 1 (Left - Month 1) for Paysheet 02 */
+  .col1-l2-gross        { top: 27.2% !important; right: 53.5% !important; }
+  .col1-l2-bonus        { top: 30.8% !important; right: 53.5% !important; }
+  .col1-l2-monthly      { top: 34.4% !important; right: 53.5% !important; }
+  .col1-l2-advance      { top: 38.0% !important; right: 53.5% !important; }
+  .col1-l2-balance1     { top: 41.6% !important; right: 53.5% !important; }
+  .col1-l2-etf8         { top: 45.2% !important; right: 53.5% !important; }
+  .col1-l2-balance2     { top: 48.8% !important; right: 53.5% !important; }
+  .col1-l2-etf12text    { top: 52.4% !important; right: 53.5% !important; }
+  .col1-l2-etf12total   { top: 56.0% !important; right: 53.5% !important; }
+  .col1-l2-net          { top: 60.5% !important; right: 53.5% !important; font-size: 15px !important; font-weight: 800 !important; }
+  .col1-l2-date         { top: 91.2% !important; right: 52.5% !important; font-size: 11.5px !important; font-weight: bold !important; }
+
+  /* Financial Amounts - Column 2 (Right - Month 2) for Paysheet 02 */
+  .col2-l2-gross        { top: 27.2% !important; right: 3.5% !important; }
+  .col2-l2-bonus        { top: 30.8% !important; right: 3.5% !important; }
+  .col2-l2-monthly      { top: 34.4% !important; right: 3.5% !important; }
+  .col2-l2-advance      { top: 38.0% !important; right: 3.5% !important; }
+  .col2-l2-balance1     { top: 41.6% !important; right: 3.5% !important; }
+  .col2-l2-etf8         { top: 45.2% !important; right: 3.5% !important; }
+  .col2-l2-balance2     { top: 48.8% !important; right: 3.5% !important; }
+  .col2-l2-etf12text    { top: 52.4% !important; right: 3.5% !important; }
+  .col2-l2-etf12total   { top: 56.0% !important; right: 3.5% !important; }
+  .col2-l2-net          { top: 60.5% !important; right: 3.5% !important; font-size: 15px !important; font-weight: 800 !important; }
+  .col2-l2-date         { top: 91.2% !important; right: 3.5% !important; font-size: 11.5px !important; font-weight: bold !important; }
 
   /* Layout 2: Wide Paysheet Ledger Format */
   .print-ledger-sheet {
