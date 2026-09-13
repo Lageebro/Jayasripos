@@ -167,6 +167,79 @@ async function syncWorkerToCloud(worker) {
 }
 
 /**
+ * Deletes a worker document and all associated production entries from Firebase Firestore.
+ */
+async function deleteWorkerFromCloud(workerId, workerEntries = []) {
+  if (!isFirebaseConnected()) return;
+  try {
+    const docId = String(workerId);
+    await firestoreDb.collection("workers").doc(docId).delete();
+    console.log("Worker deleted from Firebase Cloud:", docId);
+
+    // Delete associated machine entries for this worker in Firestore
+    const entriesSnapshot = await firestoreDb.collection("machine_entries")
+      .where("workerId", "==", Number(workerId))
+      .get();
+
+    const batch = firestoreDb.batch();
+    entriesSnapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    // Also delete any matching entries by cloudId if provided
+    if (Array.isArray(workerEntries)) {
+      for (let entry of workerEntries) {
+        if (entry && entry.cloudId) {
+          batch.delete(firestoreDb.collection("machine_entries").doc(String(entry.cloudId)));
+        }
+      }
+    }
+
+    await batch.commit();
+    console.log(`Deleted production logs for worker ${workerId} from Firebase Cloud.`);
+  } catch (err) {
+    console.warn("Failed to delete worker from Cloud:", err);
+  }
+}
+
+/**
+ * Deletes an individual machine production log entry from Firebase Firestore.
+ */
+async function deleteProductionFromCloud(cloudId) {
+  if (!isFirebaseConnected() || !cloudId) return;
+  try {
+    await firestoreDb.collection("machine_entries").doc(String(cloudId)).delete();
+    console.log("Production entry deleted from Firebase Cloud:", cloudId);
+  } catch (err) {
+    console.warn("Failed to delete production entry from Cloud:", err);
+  }
+}
+
+/**
+ * Erases all workers and machine_entries documents from Firebase Firestore (System Reset).
+ */
+async function clearCloudCollections() {
+  if (!isFirebaseConnected()) return;
+  try {
+    // 1. Delete all workers from cloud
+    const workersSnap = await firestoreDb.collection("workers").get();
+    const batch1 = firestoreDb.batch();
+    workersSnap.forEach(doc => batch1.delete(doc.ref));
+    await batch1.commit();
+
+    // 2. Delete all machine entries from cloud
+    const prodSnap = await firestoreDb.collection("machine_entries").get();
+    const batch2 = firestoreDb.batch();
+    prodSnap.forEach(doc => batch2.delete(doc.ref));
+    await batch2.commit();
+
+    console.log("All Firebase Cloud collections ('workers', 'machine_entries') cleared successfully.");
+  } catch (err) {
+    console.warn("Failed to clear Firebase Cloud collections:", err);
+  }
+}
+
+/**
  * Syncs a machine production log entry to Firebase Firestore.
  */
 async function syncProductionToCloud(entry) {

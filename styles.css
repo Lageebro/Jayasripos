@@ -478,3 +478,34 @@ input:focus, select:focus, textarea:focus {
     page-break-before: always !important;
   }
 }
+
+/* ==========================================
+   FACE ID SCANNER CUSTOM ANIMATIONS
+   ========================================== */
+@keyframes faceLaserScan {
+  0% { top: 8%; opacity: 0.7; }
+  50% { top: 88%; opacity: 1; }
+  100% { top: 8%; opacity: 0.7; }
+}
+
+.face-laser-line {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #38bdf8 20%, #a855f7 50%, #38bdf8 80%, transparent 100%);
+  box-shadow: 0 0 15px #38bdf8, 0 0 25px #a855f7;
+  animation: faceLaserScan 2.5s infinite ease-in-out;
+  z-index: 15;
+}
+
+@keyframes faceRadarPulse {
+  0% { transform: scale(0.96); opacity: 0.6; }
+  50% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(0.96); opacity: 0.6; }
+}
+
+.face-oval-ring {
+  animation: faceRadarPulse 2.8s infinite ease-in-out;
+}
+

@@ -15,12 +15,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Listen to real-time workers from cloud
     if (typeof listenCloudWorkers === "function") {
       listenCloudWorkers(async (cloudWorkers) => {
-        if (Array.isArray(cloudWorkers) && cloudWorkers.length > 0) {
+        if (Array.isArray(cloudWorkers)) {
+          const currentLocalWorkers = await db.workers.toArray();
+          const cloudWorkerIds = new Set(cloudWorkers.map(w => Number(w.id)));
+
+          // Delete local workers that were deleted from cloud
+          for (let lw of currentLocalWorkers) {
+            if (!cloudWorkerIds.has(Number(lw.id))) {
+              await db.workers.delete(lw.id);
+            }
+          }
+
+          // Put valid cloud workers
           for (let w of cloudWorkers) {
             if (w && w.id) {
               await db.workers.put(w);
             }
           }
+
+          if (typeof backupWorkersToLocalStorage === "function") {
+            await backupWorkersToLocalStorage();
+          }
+
           await loadOperators();
         }
       });
@@ -60,6 +76,9 @@ function getTodayDateString() {
 // Load Machine Operators into selection
 async function loadOperators() {
   const select = document.getElementById("op-worker-id");
+  if (!select) return;
+  const previousValue = select.value;
+
   select.innerHTML = '<option value="">Choose your name...</option>';
 
   const allWorkers = await db.workers.toArray();
@@ -71,17 +90,28 @@ async function loadOperators() {
   
   if (operators.length === 0) {
     select.innerHTML = '<option value="">No Operators Registered (Register on PC POS)</option>';
+    select.value = "";
     return;
   }
 
+  let foundPrevious = false;
   operators.forEach(op => {
     const opt = document.createElement("option");
     opt.value = op.id;
     const displayId = op.workerCode || op.customId || `#${op.id}`;
     const displayNic = op.nic ? ` | NIC: ${op.nic}` : '';
     opt.textContent = `[ID: ${displayId}] ${op.name}${displayNic}`;
+    if (String(op.id) === String(previousValue)) {
+      foundPrevious = true;
+    }
     select.appendChild(opt);
   });
+
+  if (foundPrevious) {
+    select.value = previousValue;
+  } else {
+    select.value = "";
+  }
 }
 
 // Render Mixer Buttons 1 to 7
