@@ -114,12 +114,12 @@ async function loadOperators() {
   }
 }
 
-// Render Mixer Buttons 1 to 7
+// Render Mixer Buttons 1 to 8
 function renderMixerButtons() {
   const grid = document.getElementById("mixers-grid");
   grid.innerHTML = "";
 
-  for (let m = 1; m <= 7; m++) {
+  for (let m = 1; m <= 8; m++) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.id = `btn-mixer-${m}`;
@@ -154,7 +154,7 @@ function selectMixer(count) {
   document.getElementById("op-mixers").value = count;
 
   // Highlight active button
-  for (let m = 1; m <= 7; m++) {
+  for (let m = 1; m <= 8; m++) {
     const btn = document.getElementById(`btn-mixer-${m}`);
     if (m === count) {
       btn.className = "py-3 bg-brand-600 border border-brand-500 rounded-xl text-white font-extrabold text-sm btn-animate flex items-center justify-center shadow-md shadow-brand-500/25";
@@ -200,16 +200,8 @@ async function triggerLiveCalculations() {
     previewAmount.textContent = `${calc.wage.toLocaleString()} LKR`;
     previewAmount.className = "text-xl font-extrabold text-blue-900";
     
-    // Add multiplier descriptions
-    let desc = `Base rate lookup applied`;
-    if (selectedMixerCount === 2) desc = `Mixer multiplier × 2 applied`;
-    else if (selectedMixerCount === 3) desc = `Mixer multiplier × 3 applied`;
-    else if (selectedMixerCount === 4) desc = `Mixer 4 fixed rate table applied`;
-    else if (selectedMixerCount === 5) desc = `Mixer 4 rate + 1,000 LKR bonus applied`;
-    else if (selectedMixerCount === 6) desc = `Mixer 4 rate + 2,000 LKR bonus applied`;
-    else if (selectedMixerCount === 7) desc = `Mixer 4 rate + 3,000 LKR bonus applied`;
-
-    previewInfo.textContent = desc;
+    // Add description
+    previewInfo.textContent = `Mixer ${selectedMixerCount} rate table applied`;
     previewInfo.className = "text-3xs text-blue-500 block";
   }
 }
@@ -273,9 +265,9 @@ async function submitOperatorLog(e) {
     });
 
     // Reset mixer buttons UI
-    for (let m = 1; m <= 7; m++) {
+    for (let m = 1; m <= 8; m++) {
       const btn = document.getElementById(`btn-mixer-${m}`);
-      btn.className = "py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-slate-700 font-extrabold text-sm btn-animate flex items-center justify-center";
+      if (btn) btn.className = "py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-slate-700 font-extrabold text-sm btn-animate flex items-center justify-center";
     }
 
     // Hide wage preview
